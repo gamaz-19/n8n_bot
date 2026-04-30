@@ -1,0 +1,1090 @@
+{
+  "name": "n8n-MG",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1744,
+        1728
+      ],
+      "id": "56c640cd-6cc0-42b1-a5dd-97540b100e4d",
+      "name": "Telegram Trigger",
+      "webhookId": "helpdesk-bot-webhook-001",
+      "credentials": {
+        "telegramApi": {
+          "id": "HoArP3pY1JzA6TkZ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "cond-activo",
+              "leftValue": "={{ $json.activo }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1392,
+        1728
+      ],
+      "id": "384f9318-7511-4190-92ed-587ccc70bcb8",
+      "name": "IF Usuario Activo"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "cond-logs-existe",
+              "leftValue": "={{$json.telegram_user}}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1040,
+        1712
+      ],
+      "id": "d2024113-f2ee-468d-9805-15c086f2758a",
+      "name": "IF Fila LOGS Existe"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "17I5OlrLHoZcEpyOq1exsZAydDcD1IMqqltVT4yj_wKI",
+          "mode": "list",
+          "cachedResultName": "HelpDeskBot_DB",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17I5OlrLHoZcEpyOq1exsZAydDcD1IMqqltVT4yj_wKI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 140173806,
+          "mode": "list",
+          "cachedResultName": "logs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17I5OlrLHoZcEpyOq1exsZAydDcD1IMqqltVT4yj_wKI/edit#gid=140173806"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -864,
+        1760
+      ],
+      "id": "9470ec57-6273-4e7e-a3ed-33fef4b9610e",
+      "name": "Inicializar LOGS",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZIteAns88juogkQO",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "pantalla",
+              "value": "={{ $json.pantalla || 'menu' }}",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "texto_usuario",
+              "value": "={{ $('Telegram Trigger').item.json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "user_id",
+              "value": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -704,
+        1600
+      ],
+      "id": "a342d794-8707-4712-9981-7fc4d9243c67",
+      "name": "Set Variables"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "76c69119-390e-4d22-b7a6-b6f13d8b5038",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": "inicio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "menu"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7e44f693-b157-4a62-8303-46bcb8738b87",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": "0",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "ae583efa-cc1f-4cb6-a13e-f40246f1c1e1",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": "1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "fa06e3fa-8bdf-4266-b1ec-9eeb18d097dc",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": "2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "2"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "sp5",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": "3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "3"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "sp6",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": "4",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "4"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "sp7",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": "5",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "5"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "sp8",
+                    "leftValue": "=",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "DEFAULT"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -528,
+        1584
+      ],
+      "id": "a0f3d8b2-74ad-4b62-9286-4fb4a545cb97",
+      "name": "Switch por Pantalla"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "ii Hola !!\nSoy HelpDeskBot \n\nEstoy aquí para ayudarte con solicitudes de soporte\nde forma rápida y ordenada.\n\nPor favor escribe el número de la opción que quieras usar.\n\nMenú principal:\n0. Ayuda\n1. Crear solicitud\n2. Consultar estado de solicitud\n3. Mis solicitudes\n4. Reportes\n5. Configuración",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -128,
+        1008
+      ],
+      "id": "62cff82c-be61-4f9c-aaa6-00f7e82c5545",
+      "name": "MENSAJE DEL MENU",
+      "webhookId": "helpdesk-menu-inv-wh",
+      "credentials": {
+        "telegramApi": {
+          "id": "HoArP3pY1JzA6TkZ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "17I5OlrLHoZcEpyOq1exsZAydDcD1IMqqltVT4yj_wKI",
+          "mode": "list",
+          "cachedResultName": "HelpDeskBot_DB",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17I5OlrLHoZcEpyOq1exsZAydDcD1IMqqltVT4yj_wKI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 717287505,
+          "mode": "list",
+          "cachedResultName": "usuarios",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17I5OlrLHoZcEpyOq1exsZAydDcD1IMqqltVT4yj_wKI/edit#gid=717287505"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1568,
+        1728
+      ],
+      "id": "f6047e9b-81f2-4614-8fa1-264165b7d0b0",
+      "name": "Busca usuario",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZIteAns88juogkQO",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "Actualmente no estas en nuestra base de datos",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1280,
+        2000
+      ],
+      "id": "96dce1fe-a908-4fd7-9f3c-a0e66b528dfd",
+      "name": "acceso denegado",
+      "webhookId": "helpdesk-no-acceso-wh",
+      "credentials": {
+        "telegramApi": {
+          "id": "HoArP3pY1JzA6TkZ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "17I5OlrLHoZcEpyOq1exsZAydDcD1IMqqltVT4yj_wKI",
+          "mode": "list",
+          "cachedResultName": "HelpDeskBot_DB",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17I5OlrLHoZcEpyOq1exsZAydDcD1IMqqltVT4yj_wKI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 717287505,
+          "mode": "list",
+          "cachedResultName": "usuarios",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17I5OlrLHoZcEpyOq1exsZAydDcD1IMqqltVT4yj_wKI/edit#gid=717287505"
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1216,
+        1712
+      ],
+      "id": "6cd47a9f-ce6a-4cef-9b98-0f6f3a49cf1f",
+      "name": "Estado usuario",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZIteAns88juogkQO",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "Soy tu ayudante favorito, escribe inicio para poderete ayudar",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        2224
+      ],
+      "id": "c19a2df8-7121-49f8-9a9d-aee6f79fe220",
+      "name": "Mensaje inica",
+      "webhookId": "helpdesk-menu-inv-wh",
+      "credentials": {
+        "telegramApi": {
+          "id": "HoArP3pY1JzA6TkZ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "17I5OlrLHoZcEpyOq1exsZAydDcD1IMqqltVT4yj_wKI",
+          "mode": "list",
+          "cachedResultName": "HelpDeskBot_DB",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17I5OlrLHoZcEpyOq1exsZAydDcD1IMqqltVT4yj_wKI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1917678691,
+          "mode": "list",
+          "cachedResultName": "solicitudes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17I5OlrLHoZcEpyOq1exsZAydDcD1IMqqltVT4yj_wKI/edit#gid=1917678691"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -96,
+        1712
+      ],
+      "id": "9ec80ba3-5ca6-4476-9a53-4afcd5b951bb",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZIteAns88juogkQO",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// 1. Ordenar por fecha (más reciente primero)\nitems.sort((a, b) => b.json.fecha_creacion - a.json.fecha_creacion);\n\n// 2. Agrupar por tipo\nconst grupos = {};\n\nfor (const item of items) {\n  const tipo = item.json.tipo || \"Sin tipo\";\n\n  if (!grupos[tipo]) {\n    grupos[tipo] = [];\n  }\n\n  grupos[tipo].push(item.json);\n}\n\n// 3. Construir mensaje\nlet mensajeFinal = `Tickets:\\n`;\n\nfor (const tipo in grupos) {\n  mensajeFinal += `\\n=== Tipo: ${tipo} ===\\n`;\n\n  for (const data of grupos[tipo]) {\n    mensajeFinal += `\nID: ${data.id_ticket}\nTipo: ${data.tipo}\nPrioridad: ${data.prioridad}\nDescripción: ${data.descripcion}\nEstado: ${data.estado}\nCreado por: ${data.creado_por}\nFecha de creación: ${data.fecha_creacion}\n-------------------------\\n`;\n  }\n}\n\n// 4. Retornar un solo item con el mensaje\nreturn [\n  {\n    json: {\n      mensaje: mensajeFinal\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        128,
+        1696
+      ],
+      "id": "f1e38423-4802-4c18-a3ae-c7fdd81d0fc5",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        1696
+      ],
+      "id": "0bd5753c-b61b-4c27-83d9-f7faffa9f624",
+      "name": "Send a text message1",
+      "webhookId": "bcb6bb99-464d-4229-a6fe-afb5e942f901",
+      "credentials": {
+        "telegramApi": {
+          "id": "HoArP3pY1JzA6TkZ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "17I5OlrLHoZcEpyOq1exsZAydDcD1IMqqltVT4yj_wKI",
+          "mode": "list",
+          "cachedResultName": "HelpDeskBot_DB",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17I5OlrLHoZcEpyOq1exsZAydDcD1IMqqltVT4yj_wKI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 140173806,
+          "mode": "list",
+          "cachedResultName": "logs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17I5OlrLHoZcEpyOq1exsZAydDcD1IMqqltVT4yj_wKI/edit#gid=140173806"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -96,
+        1872
+      ],
+      "id": "bd604243-adbc-466f-8d16-0a71887fc546",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZIteAns88juogkQO",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        1856
+      ],
+      "id": "dadbbb6e-5e98-4339-ba0a-3bc8e79449ef",
+      "name": "Send a text message2",
+      "webhookId": "bcb6bb99-464d-4229-a6fe-afb5e942f901",
+      "credentials": {
+        "telegramApi": {
+          "id": "HoArP3pY1JzA6TkZ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  const data = item.json;\n\n  const mensaje = `Reportes Registrados:\n\nUsuario: ${data.telegram_user}\nOpcion escogida: ${data.opcion}\nFecha de creación: ${data.timestamp}\nPantalla: ${data.pantalla}\nResultado: ${data.resultado}\n  `;\n\n  item.json.mensaje = mensaje;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        96,
+        1856
+      ],
+      "id": "15537c15-0dd2-42d4-9297-0282e09083c6",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "=Bienvenido a configuracion, si necesita ayuda solicitelo con un companiero",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        2048
+      ],
+      "id": "951ee79b-377a-4eb5-bc1d-5f16f46a3ad6",
+      "name": "Send a text message3",
+      "webhookId": "bcb6bb99-464d-4229-a6fe-afb5e942f901",
+      "credentials": {
+        "telegramApi": {
+          "id": "HoArP3pY1JzA6TkZ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "17I5OlrLHoZcEpyOq1exsZAydDcD1IMqqltVT4yj_wKI"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1917678691,
+          "mode": "list",
+          "cachedResultName": "solicitudes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17I5OlrLHoZcEpyOq1exsZAydDcD1IMqqltVT4yj_wKI/edit#gid=1917678691"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "=id_ticket",
+              "lookupValue": "={{ Number($('Telegram Trigger').item.json.message.text) - 1 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -96,
+        1552
+      ],
+      "id": "b0f6c68f-11d9-4ffd-8995-348e8cae0002",
+      "name": "Get row(s) in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZIteAns88juogkQO",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  const data = item.json;\n\n  const mensaje = `Reportes Registrados:\n\nID Usuario: ${data.creado_por}\nPrioridad: ${data.prioridad}\nTipo: ${data.tipo}\nFecha de Creacion: ${data.fecha_creacion}\nEstado: ${data.estado}\n  `;\n\n  item.json.mensaje = mensaje;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        112,
+        1552
+      ],
+      "id": "7a95fd3e-6e0a-400d-b44b-b0b3c45d5f71",
+      "name": "Code in JavaScript6"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        1552
+      ],
+      "id": "bca13e58-67c9-4217-b858-e64ee79d5a5b",
+      "name": "Send a text message17",
+      "webhookId": "bcb6bb99-464d-4229-a6fe-afb5e942f901",
+      "credentials": {
+        "telegramApi": {
+          "id": "HoArP3pY1JzA6TkZ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "message": "Por favor ingrese la solicitud en este orden:\n\nTipo:\nPrioridad:\nDescripcion:",
+        "responseType": "freeText",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        1392
+      ],
+      "id": "29971128-4988-4c5d-b167-c79fa1b0b217",
+      "name": "Send message and wait for response",
+      "webhookId": "0a03a569-0e20-4b9f-b25f-00c913cd96d4",
+      "credentials": {
+        "telegramApi": {
+          "id": "HoArP3pY1JzA6TkZ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-robotics-er-1.5-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-robotics-er-1.5-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "\nActua como agente de soporte al cliente de HelpDeskBot, dile al cliente que para mas ayuda debe contactarse directamente al numero empresarial \"1234asd\", usa un tono amigable y empresarial."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        1200
+      ],
+      "id": "609c92c9-909d-4ca1-8114-c7e2d9a1f455",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wx6tVeEfuk3hE3kx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.content.parts[0].text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        304,
+        1216
+      ],
+      "id": "5bb6952b-512b-4fae-9641-f1224a5a24c3",
+      "name": "Send a text message4",
+      "webhookId": "07a557cb-fa5d-474a-b3f4-f5687336f289",
+      "credentials": {
+        "telegramApi": {
+          "id": "HoArP3pY1JzA6TkZ",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Busca usuario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Usuario Activo": {
+      "main": [
+        [
+          {
+            "node": "Estado usuario",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "acceso denegado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Fila LOGS Existe": {
+      "main": [
+        [
+          {
+            "node": "Set Variables",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Inicializar LOGS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inicializar LOGS": {
+      "main": [
+        [
+          {
+            "node": "Set Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Variables": {
+      "main": [
+        [
+          {
+            "node": "Switch por Pantalla",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch por Pantalla": {
+      "main": [
+        [
+          {
+            "node": "MENSAJE DEL MENU",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mensaje inica",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca usuario": {
+      "main": [
+        [
+          {
+            "node": "IF Usuario Activo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Estado usuario": {
+      "main": [
+        [
+          {
+            "node": "IF Fila LOGS Existe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje inica": {
+      "main": [
+        []
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript6": {
+      "main": [
+        [
+          {
+            "node": "Send a text message17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send a text message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c955725b-64a2-4136-b1a1-dc110717900d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3224e0a7c8905a5b96c01d45e65c6a171abdee6fcb9c08ecaaa01f42215803c8"
+  },
+  "id": "BUgK7btsi0mP7x6w",
+  "tags": []
+}
